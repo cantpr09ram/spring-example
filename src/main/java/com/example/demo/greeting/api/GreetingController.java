@@ -1,7 +1,7 @@
-package com.example.demo.controller;
+package com.example.demo.greeting.api;
 
-import com.example.demo.dto.GreetingResponse;
-import com.example.demo.service.GreetingService;
+import com.example.demo.greeting.api.dto.GreetingResponse;
+import com.example.demo.greeting.service.GreetingService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
