@@ -1,7 +1,8 @@
-Spring Boot Starter
+Spring Boot Example
 
-Minimal Spring Boot 3.5 project initialization with Maven, PostgreSQL, Flyway, OpenAPI dependency, Docker Compose (dev/prod profiles), and Testcontainers support. just prove i know how to use spring
+just prove i know how to use spring
 
+Minimal Spring Boot 3.5 project initialization with Maven, PostgreSQL, Flyway, OpenAPI dependency, Docker Compose (dev/prod profiles), and Testcontainers support.
 Prerequisites
 - Java 21
 - Docker (for local Postgres and tests)
