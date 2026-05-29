@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
-import vue from '@vitejs/plugin-vue';
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
-  plugins: [vue(), tailwindcss()],
+  plugins: [vue(), tailwindcss(), tsconfigPaths()],
   server: {
     port: 5173
   }
