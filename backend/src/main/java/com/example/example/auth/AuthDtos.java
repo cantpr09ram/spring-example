@@ -1,4 +1,4 @@
-package com.example.fullstack.auth;
+package com.example.example.auth;
 
 import java.time.Instant;
 
@@ -19,16 +19,22 @@ public final class AuthDtos {
     public record RegisterRequest(
             @NotBlank @Email @Size(max = 254) String email,
             @NotBlank @Size(min = 8, max = 72) String password,
-            @NotBlank @Size(max = 120) String displayName
+            @NotBlank @Size(max = 120) String displayName,
+            Role role
     ) {
     }
 
     public record AuthResponse(String token, String tokenType, long expiresIn, UserResponse user) {
     }
 
-    public record UserResponse(Long id, String email, String displayName, Instant createdAt) {
+    public record UserResponse(Long id, String email, String displayName, Role role, Instant createdAt) {
         public static UserResponse from(User user) {
-            return new UserResponse(user.getId(), user.getEmail(), user.getDisplayName(), user.getCreatedAt());
+            return new UserResponse(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getDisplayName(),
+                    user.getRole(),
+                    user.getCreatedAt());
         }
     }
 }

@@ -22,47 +22,34 @@ const props = defineProps<{
   class?: HTMLAttributes["class"]
   error?: string
   loading?: boolean
-  mode?: "login" | "register"
   resetKey?: number
 }>()
 
 const emit = defineEmits<{
-  submit: [payload: { email: string; password: string; displayName?: string }]
-  toggleMode: []
+  submit: [payload: { email: string; password: string }]
 }>()
 
 const email = ref("")
 const password = ref("")
-const displayName = ref("")
 
-const isRegistering = computed(() => props.mode === "register")
-const title = computed(() => isRegistering.value ? "Create an account" : "Login to your account")
-const description = computed(() => isRegistering.value
-  ? "Enter your details below to create your account"
-  : "Enter your email below to login to your account"
-)
+const title = computed(() => "Login to your account")
+const description = computed(() => "Enter your email below to login to your account")
 const submitLabel = computed(() => {
   if (props.loading) {
     return "Please wait..."
   }
-  return isRegistering.value ? "Create account" : "Login"
+  return "Login"
 })
 
 function handleSubmit() {
   emit("submit", {
     email: email.value,
     password: password.value,
-    displayName: isRegistering.value ? displayName.value : undefined,
   })
 }
 
 watch(() => props.resetKey, () => {
   email.value = ""
-  password.value = ""
-  displayName.value = ""
-})
-
-watch(() => props.mode, () => {
   password.value = ""
 })
 </script>
@@ -79,18 +66,6 @@ watch(() => props.mode, () => {
       <CardContent>
         <form @submit.prevent="handleSubmit">
           <FieldGroup>
-            <Field v-if="isRegistering">
-              <FieldLabel for="display-name">
-                Name
-              </FieldLabel>
-              <Input
-                id="display-name"
-                v-model="displayName"
-                autocomplete="name"
-                maxlength="120"
-                required
-              />
-            </Field>
             <Field>
               <FieldLabel for="email">
                 Email
@@ -112,7 +87,7 @@ watch(() => props.mode, () => {
               <Input
                 id="password"
                 v-model="password"
-                :autocomplete="isRegistering ? 'new-password' : 'current-password'"
+                autocomplete="current-password"
                 type="password"
                 minlength="8"
                 maxlength="72"
@@ -127,14 +102,7 @@ watch(() => props.mode, () => {
                 {{ submitLabel }}
               </Button>
               <FieldDescription class="text-center">
-                {{ isRegistering ? "Already have an account?" : "Don't have an account?" }}
-                <button
-                  class="underline-offset-4 hover:underline"
-                  type="button"
-                  @click="emit('toggleMode')"
-                >
-                  {{ isRegistering ? "Login" : "Sign up" }}
-                </button>
+                Ask an admin to create an account for you.
               </FieldDescription>
             </Field>
           </FieldGroup>

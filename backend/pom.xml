@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>fullstack</artifactId>
+    <artifactId>example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>fullstack</name>
-    <description>Spring Boot API for the full-stack example</description>
+    <name>example</name>
+    <description>Spring Boot API for the example app</description>
 
     <properties>
         <java.version>21</java.version>

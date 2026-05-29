@@ -1,4 +1,4 @@
-package com.example.fullstack.todo;
+package com.example.example.todo;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package com.example.fullstack.todo;
+package com.example.example.todo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

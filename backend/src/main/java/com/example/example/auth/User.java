@@ -1,9 +1,11 @@
-package com.example.fullstack.auth;
+package com.example.example.auth;
 
 import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,16 +28,21 @@ public class User {
     @Column(nullable = false, length = 120)
     private String displayName;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role = Role.USER;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     protected User() {
     }
 
-    public User(String email, String passwordHash, String displayName) {
+    public User(String email, String passwordHash, String displayName, Role role) {
         this.email = email;
         this.passwordHash = passwordHash;
         this.displayName = displayName;
+        this.role = role;
     }
 
     @PrePersist
@@ -59,6 +66,10 @@ public class User {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public Instant getCreatedAt() {

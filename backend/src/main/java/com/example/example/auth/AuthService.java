@@ -1,12 +1,7 @@
-package com.example.fullstack.auth;
+package com.example.example.auth;
 
 import java.time.Instant;
 import java.util.Locale;
-
-import com.example.fullstack.auth.AuthDtos.AuthRequest;
-import com.example.fullstack.auth.AuthDtos.AuthResponse;
-import com.example.fullstack.auth.AuthDtos.RegisterRequest;
-import com.example.fullstack.auth.AuthDtos.UserResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,6 +14,11 @@ import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.example.example.auth.AuthDtos.AuthRequest;
+import com.example.example.auth.AuthDtos.AuthResponse;
+import com.example.example.auth.AuthDtos.RegisterRequest;
+import com.example.example.auth.AuthDtos.UserResponse;
 
 @Service
 public class AuthService {
@@ -39,7 +39,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public UserResponse register(RegisterRequest request) {
         String email = normalizeEmail(request.email());
         if (users.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already registered");
@@ -48,8 +48,25 @@ public class AuthService {
         User user = users.save(new User(
                 email,
                 passwordEncoder.encode(request.password()),
-                request.displayName().trim()));
-        return createResponse(user);
+                request.displayName().trim(),
+                request.role() == null ? Role.USER : request.role()));
+        return UserResponse.from(user);
+    }
+
+    @Transactional
+    public void deleteAccount(Long id, String currentUserEmail) {
+        User user = users.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (user.getEmail().equals(currentUserEmail)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Admins cannot delete their own account");
+        }
+
+        if (user.getRole() == Role.ADMIN && users.countByRole(Role.ADMIN) <= 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete the last admin account");
+        }
+
+        users.delete(user);
     }
 
     @Transactional(readOnly = true)
@@ -68,12 +85,13 @@ public class AuthService {
         Instant now = Instant.now();
         Instant expiresAt = now.plusSeconds(expiresInSeconds);
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("fullstack")
+                .issuer("example")
                 .issuedAt(now)
                 .expiresAt(expiresAt)
                 .subject(user.getEmail())
                 .claim("userId", user.getId())
                 .claim("displayName", user.getDisplayName())
+                .claim("role", user.getRole().name())
                 .build();
         JwsHeader headers = JwsHeader.with(MacAlgorithm.HS256).build();
         String token = jwtEncoder.encode(JwtEncoderParameters.from(headers, claims)).getTokenValue();

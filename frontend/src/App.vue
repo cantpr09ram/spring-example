@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { LogOut, Plus } from '@lucide/vue';
 
 import { ApiError, clearAuthToken, getAuthToken } from './api/client';
-import { getCurrentUser, login, register, type User } from './api/auth';
+import { getCurrentUser, login, type User } from './api/auth';
 import { createTodo, deleteTodo, listTodos, updateTodo, type Todo } from './api/todos';
 import LoginForm from './components/new-york-v4/blocks/login-01/components/LoginForm.vue';
 import TodoList from './components/TodoList.vue';
@@ -21,7 +21,6 @@ const authError = ref('');
 const authLoading = ref(false);
 const user = ref<User | null>(null);
 const checkingSession = ref(true);
-const authMode = ref<'login' | 'register'>('login');
 const authResetKey = ref(0);
 
 const isAuthenticated = computed(() => Boolean(user.value));
@@ -30,7 +29,6 @@ function goToLogin(message = '') {
   clearAuthToken();
   user.value = null;
   todos.value = [];
-  authMode.value = 'login';
   authError.value = message;
 }
 
@@ -97,20 +95,14 @@ async function removeTodo(id: number) {
   }
 }
 
-async function submitAuth(payload: { email: string; password: string; displayName?: string }) {
+async function submitAuth(payload: { email: string; password: string }) {
   authLoading.value = true;
   authError.value = '';
   try {
-    const response = authMode.value === 'login'
-      ? await login({
-          email: payload.email.trim(),
-          password: payload.password
-        })
-      : await register({
-          email: payload.email.trim(),
-          password: payload.password,
-          displayName: payload.displayName?.trim() ?? ''
-        });
+    const response = await login({
+      email: payload.email.trim(),
+      password: payload.password
+    });
 
     user.value = response.user;
     authResetKey.value += 1;
@@ -130,11 +122,6 @@ async function submitAuth(payload: { email: string; password: string; displayNam
 
 function signOut() {
   goToLogin();
-}
-
-function toggleAuthMode() {
-  authMode.value = authMode.value === 'login' ? 'register' : 'login';
-  authError.value = '';
 }
 
 async function restoreSession() {
@@ -181,10 +168,8 @@ onBeforeUnmount(() => {
         class="w-full"
         :error="authError"
         :loading="authLoading"
-        :mode="authMode"
         :reset-key="authResetKey"
         @submit="submitAuth"
-        @toggle-mode="toggleAuthMode"
       />
     </section>
 

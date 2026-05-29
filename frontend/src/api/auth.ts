@@ -4,6 +4,7 @@ export interface User {
   id: number;
   email: string;
   displayName: string;
+  role: 'USER' | 'ADMIN';
   createdAt: string;
 }
 
@@ -21,6 +22,7 @@ export interface LoginPayload {
 
 export interface RegisterPayload extends LoginPayload {
   displayName: string;
+  role?: 'USER' | 'ADMIN';
 }
 
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
@@ -32,13 +34,11 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   return auth;
 }
 
-export async function register(payload: RegisterPayload): Promise<AuthResponse> {
-  const auth = await request<AuthResponse>('/api/auth/register', {
+export function register(payload: RegisterPayload): Promise<User> {
+  return request<User>('/api/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload)
   });
-  setAuthToken(auth.token);
-  return auth;
 }
 
 export function getCurrentUser(): Promise<User> {

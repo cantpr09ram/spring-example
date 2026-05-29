@@ -1,4 +1,4 @@
-package com.example.fullstack.config;
+package com.example.example.config;
 
 import java.util.List;
 
