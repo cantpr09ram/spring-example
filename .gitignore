@@ -3,6 +3,7 @@
 # Java
 backend/target/
 backend/.mvn/
+backend/data/
 
 # Node
 frontend/node_modules/

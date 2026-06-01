@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import {
-  IconChevronRight,
   IconDotsVertical,
   IconInnerShadowTop,
   IconLogout,
-  IconShieldLock,
   IconUsers,
 } from '@tabler/icons-vue';
-import { ListTodo } from '@lucide/vue';
+import { Package } from '@lucide/vue';
 
-import type { User } from '../api/auth';
+import type { User } from '../../api/auth';
 import {
   Avatar,
   AvatarFallback,
-} from './ui/avatar';
+} from '../ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,24 +19,23 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from '../ui/dropdown-menu';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
   useSidebar,
-} from './ui/sidebar';
+} from '../ui/sidebar';
 
 const props = defineProps<{
-  currentTab: 'todos' | 'users';
+  currentTab: 'products' | 'users';
   isAdmin: boolean;
   user: User;
 }>();
@@ -52,10 +49,10 @@ const { isMobile, setOpenMobile } = useSidebar();
 
 const mainItems = [
   {
-    title: 'Todos',
+    title: 'Products',
     path: '/',
-    tab: 'todos' as const,
-    icon: ListTodo,
+    tab: 'products' as const,
+    icon: Package,
   },
   {
     title: 'Users',

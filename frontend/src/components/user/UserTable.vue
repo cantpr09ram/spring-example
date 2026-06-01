@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from '../api/auth';
+import type { User } from '../../api/auth';
 
 defineProps<{
   users: User[];
