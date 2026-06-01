@@ -44,3 +44,7 @@ export function register(payload: RegisterPayload): Promise<User> {
 export function getCurrentUser(): Promise<User> {
   return request<User>('/api/auth/me');
 }
+
+export function listUsers(): Promise<User[]> {
+  return request<User[]>('/api/auth/users');
+}

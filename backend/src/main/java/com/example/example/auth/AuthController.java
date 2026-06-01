@@ -1,7 +1,10 @@
 package com.example.example.auth;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,6 +49,14 @@ public class AuthController {
         User user = users.findByEmail(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         return UserResponse.from(user);
+    }
+
+    @GetMapping("/users")
+    public List<UserResponse> listUsers() {
+        return users.findAll(Sort.by(Sort.Direction.ASC, "id"))
+                .stream()
+                .map(UserResponse::from)
+                .toList();
     }
 
     @DeleteMapping("/users/{id}")
