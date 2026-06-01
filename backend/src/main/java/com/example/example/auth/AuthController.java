@@ -2,6 +2,9 @@ package com.example.example.auth;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Sort;
@@ -24,6 +27,7 @@ import com.example.example.auth.AuthDtos.UserResponse;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "Authentication and user account APIs")
 public class AuthController {
     private final AuthService authService;
     private final UserRepository users;
@@ -35,16 +39,37 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Register user",
+            description = "Creates a user account and returns the created user profile.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "User registered"),
+                    @ApiResponse(responseCode = "400", description = "Invalid registration payload")
+            })
     public UserResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
     @PostMapping("/login")
+    @Operation(
+            summary = "Login",
+            description = "Authenticates with email and password, then returns a bearer token.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Login succeeded"),
+                    @ApiResponse(responseCode = "401", description = "Invalid credentials")
+            })
     public AuthResponse login(@Valid @RequestBody AuthRequest request) {
         return authService.login(request);
     }
 
     @GetMapping("/me")
+    @Operation(
+            summary = "Get current user",
+            description = "Returns the profile for the authenticated bearer token.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Current user returned"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            })
     public UserResponse me(JwtAuthenticationToken authentication) {
         User user = users.findByEmail(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -52,6 +77,10 @@ public class AuthController {
     }
 
     @GetMapping("/users")
+    @Operation(
+            summary = "List users",
+            description = "Returns all user accounts ordered by id.",
+            responses = @ApiResponse(responseCode = "200", description = "Users returned"))
     public List<UserResponse> listUsers() {
         return users.findAll(Sort.by(Sort.Direction.ASC, "id"))
                 .stream()
@@ -61,6 +90,13 @@ public class AuthController {
 
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Delete user",
+            description = "Deletes a user account by id.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "User deleted"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            })
     public void deleteAccount(@PathVariable Long id, JwtAuthenticationToken authentication) {
         authService.deleteAccount(id, authentication.getName());
     }
