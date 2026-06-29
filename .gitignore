@@ -18,5 +18,7 @@ frontend/tsconfig.tsbuildinfo
 # IDE
 .idea/
 .vscode/
+.claude/
 
 TODO.md
+docs/

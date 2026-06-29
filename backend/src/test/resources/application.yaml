@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: real-world
+
+  datasource:
+    url: jdbc:h2:mem:realworld;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    show-sql: false
+
+  # Disable Redis autoconfiguration in tests (no Redis instance available).
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+realworld:
+  jwt:
+    secret: test-secret-this-must-be-at-least-256-bits-long-0123456789abcdef
+    expiration-seconds: 3600

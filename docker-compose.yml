@@ -1,22 +1,46 @@
 services:
   db:
-    container_name: postgres-spring-example
-    image: postgres:latest
+    container_name: rw-postgres
+    image: postgres:17-alpine
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: pass
+      POSTGRES_DB: realworld
       PGDATA: /data/postgres
     volumes:
       - db:/data/postgres
     ports:
       - "5332:5432"
     networks:
-      - db
+      - app
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d realworld"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    container_name: rw-redis
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
-  db:
+  app:
     driver: bridge
 
 volumes:
   db:
+  redis:

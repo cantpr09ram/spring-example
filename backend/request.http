@@ -1,0 +1,127 @@
+@host = http://localhost:8080
+
+### Register a user
+# @name register
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+  "user": {
+    "username": "alice",
+    "email": "alice@example.com",
+    "password": "password"
+  }
+}
+
+### Login
+# @name login
+POST {{host}}/api/users/login
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "alice@example.com",
+    "password": "password"
+  }
+}
+
+### Capture the token from a login/register response above
+@token = {{login.response.body.user.token}}
+
+### Current user
+GET {{host}}/api/user
+Authorization: Token {{token}}
+
+### Update current user
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+Content-Type: application/json
+
+{
+  "user": {
+    "bio": "I write code",
+    "image": "https://example.com/alice.png"
+  }
+}
+
+### Get a profile
+GET {{host}}/api/profiles/alice
+
+### Follow a profile
+POST {{host}}/api/profiles/alice/follow
+Authorization: Token {{token}}
+
+### Unfollow a profile
+DELETE {{host}}/api/profiles/alice/follow
+Authorization: Token {{token}}
+
+### Create an article
+# @name createArticle
+POST {{host}}/api/articles
+Authorization: Token {{token}}
+Content-Type: application/json
+
+{
+  "article": {
+    "title": "How to Train Your Dragon",
+    "description": "Ever wonder how?",
+    "body": "You have to believe",
+    "tagList": ["dragons", "training"]
+  }
+}
+
+@slug = {{createArticle.response.body.article.slug}}
+
+### List articles (filters: tag, author, favorited, limit, offset)
+GET {{host}}/api/articles?tag=dragons&limit=20&offset=0
+
+### Feed (articles from followed authors)
+GET {{host}}/api/articles/feed
+Authorization: Token {{token}}
+
+### Get a single article
+GET {{host}}/api/articles/{{slug}}
+
+### Update an article
+PUT {{host}}/api/articles/{{slug}}
+Authorization: Token {{token}}
+Content-Type: application/json
+
+{
+  "article": {
+    "body": "With dragons, you have to believe in yourself"
+  }
+}
+
+### Favorite an article
+POST {{host}}/api/articles/{{slug}}/favorite
+Authorization: Token {{token}}
+
+### Unfavorite an article
+DELETE {{host}}/api/articles/{{slug}}/favorite
+Authorization: Token {{token}}
+
+### Add a comment
+POST {{host}}/api/articles/{{slug}}/comments
+Authorization: Token {{token}}
+Content-Type: application/json
+
+{
+  "comment": {
+    "body": "Nice article!"
+  }
+}
+
+### List comments
+GET {{host}}/api/articles/{{slug}}/comments
+
+### Delete a comment (replace 1 with the comment id)
+DELETE {{host}}/api/articles/{{slug}}/comments/1
+Authorization: Token {{token}}
+
+### Delete an article
+DELETE {{host}}/api/articles/{{slug}}
+Authorization: Token {{token}}
+
+### Get all tags
+GET {{host}}/api/tags
